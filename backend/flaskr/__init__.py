@@ -103,7 +103,7 @@ def create_app(test_config=None):
     TEST: When you click the trash icon next to a question, the question will be removed.
     This removal will persist in the database and when you refresh the page.
     """
-    @app.route('/question/<int:question_id>', methods=['DELETE'])
+    @app.route('/questions/<int:question_id>', methods=['DELETE'])
     def delete_question(question_id):
         if not isinstance(question_id, int):
             abort(400)
@@ -133,7 +133,7 @@ def create_app(test_config=None):
     
     # Done
     """
-    @app.route('/questions/search', methods=['POST'])  # Check endpoint in front
+    @app.route('/questions', methods=['POST'])  # Check endpoint in front
     def create_question():
         body = request.get_json()
 
@@ -170,20 +170,21 @@ def create_app(test_config=None):
 
     # Done
     """
-    @app.route('/search', methods=['POST'])
+    @app.route('/questions/search', methods=['POST'])
     def search_questions():
         body = request.get_json()
-        search_term = body.get('search', None)
+        search_term = body.get('searchTerm', None)
         try:
-            if 'search' in body:
+            if 'searchTerm' in body:
                 selection = Question.query.order_by(Question.id).filter(Question.question.ilike(f"%{search_term}%")).all()
                 search_questions = paginate_questions(request, selection)
 
                 return jsonify({
                     'success': True,
                     'search_term': search_term,
-                    'question': search_questions,
-                    'total_questions_in_search': len(search_questions)
+                    'questions': search_questions,
+                    'total_questions': len(search_questions),
+                    
                 })
 
           
@@ -233,17 +234,17 @@ def create_app(test_config=None):
     @app.route('/quizzes', methods=['POST'])
     def get_quiz_questions():
         body = request.get_json() # gets a json that consist of all previous questions and a chosen category- also in json
-        category = body.get('category')
-        prev_questions = body.get('prev_questions')
+        category = body.get('quiz_category')
+        prev_questions = body.get('previous_questions')
 
         if not (prev_questions or category):
             abort(400)
 
-        category_id = category['id']
+        category_id = int(category['id'])
         previous_questions = [q for q in prev_questions]
         previous_questions_id = [q['id'] for q in previous_questions]
 
-        if category_id == '0':
+        if category_id == 0:
             questions = Question.query.filter(~Question.id.in_(prev_questions)).order_by(Question.id)
         else:
             questions = Question.query.filter(Question.category==category_id, ~Question.id.in_(previous_questions_id)).order_by(Question.id)
