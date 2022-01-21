@@ -237,57 +237,30 @@ def create_app(test_config=None):
         category = body.get('quiz_category')
         prev_questions = body.get('previous_questions')
 
-        if not (prev_questions or category):
-            abort(400)
+        try:
+            if not (prev_questions or category):
+                abort(400)
 
-        category_id = int(category['id'])
-        previous_questions = [q for q in prev_questions]
-        previous_questions_id = [q['id'] for q in previous_questions]
+            category_id = int(category['id'])
+            previous_questions = [q for q in prev_questions]
+            # previous_questions_id = [q['id'] for q in previous_questions]
 
-        if category_id == 0:
-            questions = Question.query.filter(~Question.id.in_(prev_questions)).order_by(Question.id)
-        else:
-            questions = Question.query.filter(Question.category==category_id, ~Question.id.in_(previous_questions_id)).order_by(Question.id)
+            if category_id == 0:
+                questions = Question.query.filter(~Question.id.in_(previous_questions)).order_by(Question.id)
+            else:
+                questions = Question.query.filter(Question.category==category_id, ~Question.id.in_(previous_questions)).order_by(Question.id)
 
-        question = questions.order_by(func.random()).first()
+            question = questions.order_by(func.random()).first()
 
-        if not question:
-            return jsonify({})
-        return jsonify({
-            "success": True,
-            "question": question.format()
-        })
+            if not question:
+                return jsonify({})
+            return jsonify({
+                "success": True,
+                "question": question.format()
+            })
+        except:
+            abort(422)
 
-        # try:
-
-            
-        #     category_id = category.get('id')  # gets the id from the category object
-        #     selection = Question.query.filter(Question.category==category_id).filter(Question.id.in_(prev_questions)).order_by(Question.id)
-
-        #     # if not category_id:
-        #     #     selection = Question.query.filter(~Question.id.in_(prev_questions)).order_by(Question.id)
-            
-        #     # else:
-        #     #     selection = Question.query.filter(Question.category==category_id, ~Question.id.in_(prev_questions)).order_by(Question.id)
-
-        #     # question = selection.order_by(func.random()).first()
-        #     #     question = selection.first()
-            
-        #     # if not question:
-        #     #     return jsonify({})
-            
-        #     return jsonify({
-        #         'category': category_id,
-        #         'selection': selection.first().format(),
-                
-        #     })
-        #     # return jsonify({
-        #     #     'success': True,
-        #     #     'question': question.format()
-        #     # })
-        
-        # except:
-        #     abort(422)
 
     """
     @TODO:
