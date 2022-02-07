@@ -93,7 +93,7 @@ def create_app(test_config=None):
             'questions': current_questions,
             'total_questions': len(Question.query.all()),
             'categories': category,
-            'current_category': " ",
+            'success': True,
         })
 
     """
@@ -147,13 +147,9 @@ def create_app(test_config=None):
             
             new_question.insert()
 
-            selection = Question.query.order_by(Question.id).all()
-            current_questions = paginate_questions(request, selection)
-
             return jsonify({
                 'success': True,
-                'created':new_question.id,
-                'questions': current_questions,
+                'questions': new_question.format(),
                 'total_questions': len(Question.query.all())
             })
         except:
