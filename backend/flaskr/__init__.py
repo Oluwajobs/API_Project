@@ -59,7 +59,8 @@ def create_app(test_config=None):
             category[item.id] = item.type
         
         return jsonify({
-            'categories': category
+            'categories': category,
+            'success': True,
         })
 
     """
@@ -153,7 +154,7 @@ def create_app(test_config=None):
                 'total_questions': len(Question.query.all())
             })
         except:
-            abort(422)  # unprocessable
+            abort(405)  # unprocessable
     """
     @TODO:
     Create a POST endpoint to get questions based on a search term.
@@ -268,7 +269,7 @@ def create_app(test_config=None):
     def page_not_found(error):
         return jsonify({
             "success": False,
-            "message":"This page does not exist",
+            "message":"Bad Request",
             "error": 400,
             
             })
@@ -277,8 +278,17 @@ def create_app(test_config=None):
     def bad_request(error):
         return jsonify({
             "success": False,
-            "message":"Bad request",
+            "message":"Resource Not Found",
             "error": 404,
+            
+            })
+    
+    @app.errorhandler(405)
+    def bad_request(error):
+        return jsonify({
+            "success": False,
+            "message":"Method Not Allowed",
+            "error": 405,
             
             })
     
