@@ -75,6 +75,7 @@ Errors are returned as JSON objects in the following format:
 The API will return one of the following 4 error message when a request is unsuccessful:
 - 400: Bad Request
 - 404: Not Found
+- 405: Method Not Allowed
 - 422: Unprocessable Entity
 - 500: Internal Server error
 
@@ -94,13 +95,15 @@ The API will return one of the following 4 error message when a request is unsuc
 
   ```json
   {
-    "1": "Science",
-    "2": "Art",
-    "3": "Geography",
-    "4": "History",
-    "5": "Entertainment",
-    "6": "Sports"
-  }
+    "categories":{
+      "1":"Science",
+      "2":"Art",
+      "3":"Geography",
+      "4":"History",
+      "5":"Entertainment",
+      "6":"Sports"},
+      
+    "success": true} 
   ```
 
 `GET '/questions'`
@@ -230,7 +233,13 @@ The API will return one of the following 4 error message when a request is unsuc
 
   ```json
   {
-    "question":{"answer":"Escher","category":2,"difficulty":1,"id":16,"question":"Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"},
+    "question":{
+      "answer":"Escher",
+      "category":2,
+      "difficulty":1,
+      "id":16,
+      "question":"Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"},
+    
     "success":true
     
   } 
