@@ -211,7 +211,7 @@ def create_app(test_config=None):
                 "success": True,
                 "questions": questions_by_category,
                 "total_questions": len(selection),
-                'current_category': category_id
+                "current_category": category_id
             })
         except:
             abort(422)  #unprocessable
